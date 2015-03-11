@@ -12,6 +12,7 @@
 @interface ExampleViewController()
 @property (nonatomic, weak) UIButton *nextButton;
 @property (nonatomic, weak) UIButton *startButton;
+@property (nonatomic, weak) UIView *swipeView;
 @end
 @implementation ExampleViewController
 
@@ -44,6 +45,12 @@
     [btn addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     self.nextButton = btn;
+    
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 100)];
+    [view setTag:1002];
+    [view setBackgroundColor:[UIColor yellowColor]];
+    [self.view addSubview:view];
+    self.swipeView = view;
 }
 
 - (void)viewWillLayoutSubviews
@@ -60,7 +67,10 @@
     
     self.startButton.center = CGPointMake(center.x, center.y * 0.5);
     self.nextButton.center = CGPointMake(center.x, self.startButton.center.y + 100.f);
+    self.swipeView.center = CGPointMake(center.x, self.nextButton.center.y + 220.f);
+    
 }
+
 
 - (void)start:(id)sender
 {

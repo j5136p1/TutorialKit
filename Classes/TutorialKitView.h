@@ -31,6 +31,9 @@
                     messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
+                           useInfoDialog:(BOOL) useInfoDialog
+                      descriptionMessage:(NSString*)descriptionMessage
+                         nextButtonLabel:(NSString*)nexButtonLabel
                            highlightView:(UIView *)view
                           highlightPoint:(CGPoint)point
                   highlightPointRelative:(BOOL)relativeHighlightPoint
@@ -42,6 +45,10 @@
                    messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
+                           useInfoDialog:(BOOL) useInfoDialog
+                      descriptionMessage:(NSString*)descriptionMessage
+                         nextButtonLabel:(NSString*)nexButtonLabel
+                           highlightView:(UIView *)view
                        swipeGestureStart:(CGPoint)start
                          swipeGestureEnd:(CGPoint)end
                    swipePositionsRelative:(BOOL)relativeSwipePositions
@@ -54,5 +61,5 @@
 @property (nonatomic) NSInteger sequenceStep;
 @property (nonatomic) CGFloat blurAmount;
 @property (nonatomic, strong) UIColor *tintColor;
-
+@property (nonatomic, strong) UIColor *infoDialogBackgroundColor;
 @end

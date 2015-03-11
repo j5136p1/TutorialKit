@@ -18,8 +18,11 @@
     self.window.backgroundColor = [UIColor whiteColor];
     self.window.rootViewController = [[ExampleViewController alloc] init];
     
-    NSValue *msgPoint = [NSValue valueWithCGPoint:
-                         CGPointMake(0.5,0.7)];
+    NSValue *msgPointTop = [NSValue valueWithCGPoint:
+                         CGPointMake(0.5,0.16)];
+    NSValue *msgPointBottom = [NSValue valueWithCGPoint:
+                         CGPointMake(0.5,0.842)];
+
     NSValue *swipeStart = [NSValue valueWithCGPoint:
                            CGPointMake(0.75,0.8)];
     NSValue *swipeEnd = [NSValue valueWithCGPoint:
@@ -30,19 +33,24 @@
                        @{
                            TKHighlightViewTag: @(1001),
                            TKMessage: @"First, press this button.",
-                           TKMessageRelativePoint: msgPoint
+                           TKMessageRelativePoint: msgPointBottom,
+                           TKStepType:[NSNumber numberWithInt:TKStepTypeButton]
                            },
                        // Step 1
                        @{
+                           TKHighlightViewTag: @(1002),
                            TKSwipeGestureRelativeStartPoint: swipeStart,
                            TKSwipeGestureRelativeEndPoint: swipeEnd,
                            TKMessage: @"Next, swipe left.",
-                           TKMessageRelativePoint: msgPoint
+                           TKMessageRelativePoint: msgPointTop,
+                           TKStepType:[NSNumber numberWithInt:TKStepTypeSwipe],
+                           TKSwipeGestureDirection: [NSNumber numberWithUnsignedInteger:UISwipeGestureRecognizerDirectionLeft]
                            },
                        // Step 2
                        @{
                            TKMessage: @"That's it! Yer all done!",
-                           TKMessageRelativePoint: msgPoint,
+                           TKMessageRelativePoint: msgPointBottom,
+                           TKStepType:[NSNumber numberWithInt:TKStepTypeNonAction],
                            TKCompleteCallback: ^{ NSLog(@"ALL DONE."); }
                            },
                        ];
@@ -54,14 +62,15 @@
                            @{
                                TKHighlightViewTag: @(1001),
                                TKMessage: @"Please press this button again.",
-                               TKMessageRelativePoint: msgPoint
+                               TKMessageRelativePoint: msgPointBottom,
+                               TKStepType:[NSNumber numberWithInt:TKStepTypeButton]
                                },
                            ];
     [TutorialKit insertTutorialSequence:moreSteps name:@"example" beforeStep:2];
     
     // some optional defaults
     [TutorialKit setDefaultBlurAmount:0.5];
-    [TutorialKit setDefaultMessageColor:UIColor.grayColor];
+    [TutorialKit setDefaultMessageColor:[UIColor whiteColor]];
     [TutorialKit setDefaultTintColor:[UIColor colorWithWhite:1.0 alpha:0.5]];
     
     [self.window makeKeyAndVisible];

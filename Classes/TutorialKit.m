@@ -35,6 +35,7 @@
 @property (nonatomic, strong) NSMutableDictionary *sequences;
 @property (nonatomic, strong) TutorialKitView *currentTutorialView;
 @property (nonatomic, strong) UIColor *backgroundTintColor;
+@property (nonatomic, strong) UIColor *infoDialogBackgroundColor;
 @property (nonatomic, strong) UIColor *labelColor;
 @property (nonatomic, strong) UIFont *labelFont;
 @property (nonatomic) CGFloat blurAmount;
@@ -132,10 +133,15 @@
         tkv.sequenceStep = step.integerValue;
         tkv.sequenceName = name;
         tkv.tintColor = TutorialKit.sharedInstance.backgroundTintColor;
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
-                                                 initWithTarget:TutorialKit.sharedInstance
-                                                 action:@selector(dismissTutorialView:)];
-        [tkv addGestureRecognizer:tapRecognizer];
+        tkv.infoDialogBackgroundColor = TutorialKit.sharedInstance.infoDialogBackgroundColor;
+        
+        if (![tkv.values objectForKey:TKSwipeGestureRelativeEndPoint]) {
+            UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
+                                                     initWithTarget:TutorialKit.sharedInstance
+                                                     action:@selector(dismissTutorialView:)];
+            [tkv addGestureRecognizer:tapRecognizer];
+        }
+        
         TutorialKit.sharedInstance.currentTutorialView = tkv;
         TutorialKit.sharedInstance.shouldContinue = shouldContinue;
         [TutorialKit presentTutorialView:tkv withAnimation:YES];
@@ -183,6 +189,18 @@
         }
         return step;
     }
+    
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (NSInteger)stepsForTutorialWithName:(NSString *)name
+{
+    NSMutableDictionary *sequence = [TutorialKit.sharedInstance.sequences objectForKey:name];
+    
+    if(sequence)
+        return [sequence count];
+    
     
     return 0;
 }
@@ -310,6 +328,12 @@
     TutorialKit.sharedInstance.backgroundTintColor = color;
 }
 
+////////////////////////////////////////////////////////////////////////////////
++ (void)setInfoDialogBackgroundColor:(UIColor *)color
+{
+    TutorialKit.sharedInstance.infoDialogBackgroundColor = color;
+}
+
 #pragma mark - Private
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -320,6 +344,16 @@
     }
     
     return _backgroundTintColor;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+- (UIColor *)infoDialogBackgroundColor
+{
+    if(!_infoDialogBackgroundColor) {
+        _infoDialogBackgroundColor = [UIColor colorWithRed:61.0f/255.0f green:168.0f/255.0f blue:225.0f/255.0f alpha:1.0f];
+    }
+    
+    return _infoDialogBackgroundColor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -367,12 +401,12 @@
     [UIView animateWithDuration:0.5 animations:^{
         view.alpha = 0;
     } completion:^(BOOL finished) {
+        [view removeFromSuperview];
+        
         if(TutorialKit.sharedInstance.shouldContinue) {
             [TutorialKit advanceTutorialSequenceWithName:view.sequenceName];
         }
-        else {
-            [view removeFromSuperview];
-        }
+        
     }];
 }
 

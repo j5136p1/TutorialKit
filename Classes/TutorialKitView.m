@@ -52,7 +52,7 @@
 #import <Accelerate/Accelerate.h>
 
 #define kTKGestureAnimationDuration 1.8
-#define kTKMessagePadding (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 40.0 : 15.0)
+#define kTKMessagePadding (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 10.0 : 4.0)
 
 extern UIColor *gTutorialLabelColor;
 extern UIFont *gTutorialLabelFont;
@@ -148,6 +148,12 @@ extern UIFont *gTutorialLabelFont;
 @property (nonatomic) CGFloat blurRadius;
 @property (nonatomic) NSInteger blurIterations;
 @property (nonatomic, weak) UIImageView *blurView;
+
+@property (nonatomic, weak) UIButton *nextButton;
+@property (nonatomic, weak) UITextView *descriptionLabel;
+@property (nonatomic, weak) UIView *controlView;
+@property (nonatomic) BOOL useInfoDialogForMessages;
+
 @end
 
 @implementation TutorialKitView
@@ -158,6 +164,9 @@ extern UIFont *gTutorialLabelFont;
                    messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
+                           useInfoDialog:(BOOL) useInfoDialog
+                      descriptionMessage:(NSString*)descriptionMessage
+                         nextButtonLabel:(NSString*)nexButtonLabel
                            highlightView:(UIView *)view
                           highlightPoint:(CGPoint)point
                   highlightPointRelative:(BOOL)relativeHighlightPoint
@@ -170,6 +179,21 @@ extern UIFont *gTutorialLabelFont;
         if(color) tkv.messageLabel.textColor = color;
         if(font) tkv.messageLabel.font = font;
     }
+    
+    if (useInfoDialog && descriptionMessage && tkv.descriptionLabel) {
+        [tkv.descriptionLabel setText:descriptionMessage];
+        if(color) tkv.descriptionLabel.textColor = color;
+        if(color) tkv.nextButton.backgroundColor = color;
+        if(font) tkv.descriptionLabel.font = font;
+        
+        if (nexButtonLabel)
+            [tkv.nextButton setTitle:nexButtonLabel forState:UIControlStateNormal];
+        else
+            [tkv.nextButton setTitle:@"Next" forState:UIControlStateNormal];
+
+    }
+    
+    tkv.useInfoDialogForMessages = useInfoDialog;
     tkv.messageCenterRelative = relativeMessageCenter;
     tkv.messageCenter = messageCenter;
     tkv.highlightView = view;
@@ -186,6 +210,10 @@ extern UIFont *gTutorialLabelFont;
                    messageCenterRelative:(BOOL)relativeMessageCenter
                                     font:(UIFont *)font
                                    color:(UIColor *)color
+                           useInfoDialog:(BOOL) useInfoDialog
+                      descriptionMessage:(NSString*)descriptionMessage
+                         nextButtonLabel:(NSString*)nexButtonLabel
+                           highlightView:(UIView *)view
                        swipeGestureStart:(CGPoint)start
                          swipeGestureEnd:(CGPoint)end
                   swipePositionsRelative:(BOOL)relativeSwipePositions
@@ -198,10 +226,27 @@ extern UIFont *gTutorialLabelFont;
         if(color) tkv.messageLabel.textColor = color;
         if(font) tkv.messageLabel.font = font;
     }
+    
+    if (useInfoDialog && descriptionMessage && tkv.descriptionLabel) {
+        [tkv.descriptionLabel setText:descriptionMessage];
+        if(color) tkv.descriptionLabel.textColor = color;
+        if(color) tkv.nextButton.backgroundColor = color;
+        if(font) tkv.descriptionLabel.font = font;
+
+        if (nexButtonLabel)
+            [tkv.nextButton setTitle:nexButtonLabel forState:UIControlStateNormal];
+        else
+            [tkv.nextButton setTitle:@"Next" forState:UIControlStateNormal];
+        
+        
+    }
+    
+    tkv.useInfoDialogForMessages = useInfoDialog;
     tkv.gesturePointsRelative = relativeSwipePositions;
     tkv.gestureStart = start;
     tkv.gestureEnd = end;
     tkv.messageCenter = messageCenter;
+    tkv.highlightView = view;
     tkv.messageCenterRelative = relativeMessageCenter;
     tkv.highlightPoint = CGPointMake((start.x + end.x) / 2.f, (start.y + end.y) / 2.f);
     tkv.highlightRadius = radius;
@@ -241,12 +286,15 @@ extern UIFont *gTutorialLabelFont;
     }
     
     TutorialKitView *tkv = nil;
-    if([values objectForKey:TKHighlightView]) {
+    if([[values objectForKey:TKStepType] intValue] != TKStepTypeSwipe) {
         tkv = [TutorialKitView tutorialViewWithMessage:[values objectForKey:TKMessage]
                                          messageCenter:msgPoint
                                  messageCenterRelative:msgPointRelative
                                                   font:[values objectForKey:TKMessageFont]
                                                  color:[values objectForKey:TKMessageColor]
+                                         useInfoDialog:YES
+                                    descriptionMessage:@""
+                                       nextButtonLabel:@"Next"
                                           highlightView:[values objectForKey:TKHighlightView]
                                          highlightPoint:highlightPoint
                                 highlightPointRelative:highlightPointRelative
@@ -278,6 +326,10 @@ extern UIFont *gTutorialLabelFont;
                                  messageCenterRelative:msgPointRelative
                                                   font:[values objectForKey:TKMessageFont]
                                                  color:[values objectForKey:TKMessageColor]
+                                         useInfoDialog:YES
+                                    descriptionMessage:@""
+                                       nextButtonLabel:@"Next"
+                                         highlightView:[values objectForKey:TKHighlightView]
                                      swipeGestureStart:swipeStart
                                        swipeGestureEnd:swipeEnd
                                 swipePositionsRelative:swipePointsRelative
@@ -313,6 +365,7 @@ extern UIFont *gTutorialLabelFont;
         self.sequenceStep = 0;
         
         self.tintColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+        self.infoDialogBackgroundColor = [UIColor colorWithRed:61.0f/255.0f green:168.0f/255.0f blue:225.0f/255.0f alpha:1.0f];
 
         self.updating = NO;
         
@@ -335,14 +388,44 @@ extern UIFont *gTutorialLabelFont;
         [self addSubview:gesture];
         self.gestureView = gesture;
 
+        // create the control area View
+        UIView *controlView = [[UIView alloc] initWithFrame:CGRectZero];
+        
         // create the message label and add to the view
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
         label.textColor = UIColor.blackColor;
         label.backgroundColor = UIColor.clearColor;
         label.numberOfLines = 0;
-        [self addSubview:label];
+        [controlView addSubview:label];
+
+        // create the description label and add to the view
+        UITextView *descriptionLabel = [[UITextView alloc] initWithFrame:CGRectZero];
+        [descriptionLabel setEditable:NO];
+        [descriptionLabel setTextAlignment:NSTextAlignmentCenter];
+        descriptionLabel.textColor = UIColor.blackColor;
+        descriptionLabel.backgroundColor = UIColor.clearColor;
+        [controlView addSubview:descriptionLabel];
+
+        // create the next button and add to the view
+        UIButton *nextButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [nextButton setTitleColor:controlView.backgroundColor forState:UIControlStateNormal];
+        nextButton.backgroundColor = UIColor.blackColor;
         
+        [controlView addSubview:nextButton];
+
+        // create the steps label and add to the view
+        UILabel *stepsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        stepsLabel.textColor = UIColor.blackColor;
+        stepsLabel.backgroundColor = UIColor.clearColor;
+        stepsLabel.numberOfLines = 0;
+        [controlView addSubview:stepsLabel];
+
+        [self addSubview:controlView];
+        
+        self.controlView = controlView;
         self.messageLabel = label;
+        self.descriptionLabel = descriptionLabel;
+        self.nextButton = nextButton;
         
         self.userInteractionEnabled = YES;
         self.exclusiveTouch = NO;
@@ -373,24 +456,47 @@ extern UIFont *gTutorialLabelFont;
     [super layoutSubviews];
     
     if(self.messageLabel && self.messageLabel.text) {
+        
+        [self.controlView setFrame:CGRectMake(0, 0, [[[UIApplication sharedApplication] delegate] window].frame.size.width, 180)];
+        
         [self.messageLabel sizeToFit];
-        CGFloat maxWidth = self.frame.size.width - kTKMessagePadding * 2.f;
+        [self.descriptionLabel sizeToFit];
+        
+        CGFloat maxWidth = self.frame.size.width - kTKMessagePadding;
         if(self.messageLabel.frame.size.width > maxWidth) {
             CGSize fit = [self.messageLabel sizeThatFits:CGSizeMake(maxWidth, 99999.f)];
             self.messageLabel.frame = CGRectMake(0,0,fit.width,fit.height);
             self.messageLabel.textAlignment = NSTextAlignmentCenter;
         }
-        
-        self.messageLabel.center = self.messageCenterRelative ? [self getAbsolutePoint:self.messageCenter] : self.messageCenter;
-        
+
+        if(self.descriptionLabel.frame.size.width > maxWidth) {
+            CGSize fit = [self.descriptionLabel sizeThatFits:CGSizeMake(maxWidth, 99999.f)];
+            self.descriptionLabel.frame = CGRectMake(0,0,fit.width,64);
+            self.descriptionLabel.textAlignment = NSTextAlignmentCenter;
+        }
+
+        if ([[_values objectForKey:TKStepType] intValue] == TKStepTypeText ||
+            [[_values objectForKey:TKStepType] intValue] == TKStepTypeNonAction) {
+            [self.nextButton setFrame:CGRectMake(0, 0, 100, 44)];
+        }
+
+        self.controlView.center = self.messageCenterRelative ? [self getAbsolutePoint:self.messageCenter] : self.messageCenter;
+        self.messageLabel.center = CGPointMake(self.controlView.center.x + kTKMessagePadding, (self.messageLabel.frame.size.height /2) + kTKMessagePadding);
+        self.descriptionLabel.center = CGPointMake(self.controlView.center.x, self.messageLabel.frame.size.height+ kTKMessagePadding + (self.descriptionLabel.frame.size.height/2));
+        self.nextButton.center = CGPointMake(self.controlView.center.x, self.messageLabel.frame.size.height + self.descriptionLabel.frame.size.height + (kTKMessagePadding *1.5f) + (self.nextButton.frame.size.height/2));
+   
+
         // prevent aliasing
-        CGRect messageFrame = self.messageLabel.frame;
+        CGRect messageFrame = self.controlView.frame;
         messageFrame.origin.x = floor(messageFrame.origin.x);
         messageFrame.origin.y = floor(messageFrame.origin.y);
-        self.messageLabel.frame = messageFrame;
+        self.controlView.frame = messageFrame;
+        [self.controlView setBackgroundColor:_infoDialogBackgroundColor];
+        [self.nextButton setTitleColor:_infoDialogBackgroundColor forState:UIControlStateNormal];
     }
     
     self.blurView.frame = self.bounds;
+    
     
     [self updateAsynchronously:YES completion:nil];
 }
@@ -464,8 +570,13 @@ extern UIFont *gTutorialLabelFont;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     // pass through and dismiss!
-    self.gestureView.hidden = YES;
-    [TutorialKit dismissCurrentTutorialView];
+    if (_gestureStart.x == 0.0f && _gestureStart.y == 0.0f) {
+        CGPoint locationInView = [_highlightView convertPoint:point fromView:_highlightView.window];
+        if ([_highlightView pointInside:locationInView withEvent:nil]) {
+            self.gestureView.hidden = YES;
+            [TutorialKit dismissCurrentTutorialView];
+        }
+    }
     return nil;
 }
 
@@ -693,4 +804,9 @@ extern UIFont *gTutorialLabelFont;
     }
 }
 
+-(void)goToNextStep:(id) sender{
+#warning MOL : Doesn't work at the moment
+    [TutorialKit advanceTutorialSequenceWithName:self.sequenceName andContinue:YES];
+
+}
 @end

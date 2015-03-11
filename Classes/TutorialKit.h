@@ -39,10 +39,18 @@ static NSString* const TKHighlightRadius = @"TKHighlightRadius";
 static NSString* const TKSwipeGestureStartPoint = @"TKSwipeGestureStartPoint";
 static NSString* const TKSwipeGestureRelativeStartPoint = @"TKSwipeGestureRelativeStartPoint";
 static NSString* const TKSwipeGestureEndPoint = @"TKSwipeGestureEndPoint";
+static NSString* const TKSwipeGestureDirection = @"TKSwipeGestureDirection";
 static NSString* const TKSwipeGestureRelativeEndPoint = @"TKSwipeGestureRelativeEndPoint";
 static NSString* const TKCompleteCallback = @"TKCompleteCallback";
-
+static NSString* const TKStepType = @"TKStepType";
 @interface TutorialKit : NSObject
+
+typedef enum {
+    TKStepTypeButton  = 0,
+    TKStepTypeSwipe = 1,
+    TKStepTypeText  = 2,
+    TKStepTypeNonAction = 3
+} TKStepTypeEnum;
 
 /** Adds a tutorial sequence to display
  
@@ -119,6 +127,12 @@ static NSString* const TKCompleteCallback = @"TKCompleteCallback";
  */
 + (NSInteger)currentStepForTutorialWithName:(NSString *)name;
 
+/** Count of steps for the specified tutorial
+ 
+ @param name The name of the tutorial sequence
+ @return Returns the count of steps
+ */
++ (NSInteger)stepsForTutorialWithName:(NSString *)name;
 
 /** The UIView for the active tutorial step
  
