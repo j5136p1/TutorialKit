@@ -19,7 +19,7 @@
     self.window.rootViewController = [[ExampleViewController alloc] init];
     
     NSValue *msgPointTop = [NSValue valueWithCGPoint:
-                         CGPointMake(0.5,0.16)];
+                         CGPointMake(0.5,0.20)];
     NSValue *msgPointBottom = [NSValue valueWithCGPoint:
                          CGPointMake(0.5,0.842)];
 
