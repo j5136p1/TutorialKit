@@ -61,7 +61,7 @@
 #pragma mark UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     
-    if ([TutorialKit currentTutorialView] && [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] && touch.view == [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView])
+    if (([TutorialKit currentTutorialView] && [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] && touch.view == [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView]))
         _handleGesture = YES;
     else
         _handleGesture = NO;

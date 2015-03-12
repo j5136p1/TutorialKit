@@ -43,6 +43,14 @@ static NSString* const TKSwipeGestureDirection = @"TKSwipeGestureDirection";
 static NSString* const TKSwipeGestureRelativeEndPoint = @"TKSwipeGestureRelativeEndPoint";
 static NSString* const TKCompleteCallback = @"TKCompleteCallback";
 static NSString* const TKStepType = @"TKStepType";
+static NSString* const TKDescription = @"TKDescription";
+static NSString* const TKButtonTitle = @"TKButtonTitle";
+static NSString* const TKUseInfoDialog = @"TKUseInfoDialog";
+
+@protocol TKTutorialKitDelegate
+    
+@end
+
 @interface TutorialKit : NSObject
 
 typedef enum {
@@ -51,7 +59,7 @@ typedef enum {
     TKStepTypeText  = 2,
     TKStepTypeNonAction = 3
 } TKStepTypeEnum;
-
+    
 /** Adds a tutorial sequence to display
  
  Example:
@@ -191,4 +199,9 @@ typedef enum {
  */
 + (void)setDefaultTintColor:(UIColor *)color;
 
+/** go to next step in tutorial
+ 
+ @param sender for the action
+ */
++ (void)goToNextStep:(id)sender;
 @end

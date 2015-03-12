@@ -33,6 +33,8 @@
                        @{
                            TKHighlightViewTag: @(1001),
                            TKMessage: @"First, press this button.",
+                           TKDescription: @"First step description",
+                           TKUseInfoDialog: @YES,
                            TKMessageRelativePoint: msgPointBottom,
                            TKStepType:[NSNumber numberWithInt:TKStepTypeButton]
                            },
@@ -42,6 +44,8 @@
                            TKSwipeGestureRelativeStartPoint: swipeStart,
                            TKSwipeGestureRelativeEndPoint: swipeEnd,
                            TKMessage: @"Next, swipe left.",
+                           TKDescription: @"Second step description",
+                           TKUseInfoDialog: @YES,
                            TKMessageRelativePoint: msgPointTop,
                            TKStepType:[NSNumber numberWithInt:TKStepTypeSwipe],
                            TKSwipeGestureDirection: [NSNumber numberWithUnsignedInteger:UISwipeGestureRecognizerDirectionLeft]
@@ -49,6 +53,9 @@
                        // Step 2
                        @{
                            TKMessage: @"That's it! Yer all done!",
+                           TKDescription: @"Third step description",
+                           TKButtonTitle: @"Done",
+                           TKUseInfoDialog: @YES,
                            TKMessageRelativePoint: msgPointBottom,
                            TKStepType:[NSNumber numberWithInt:TKStepTypeNonAction],
                            TKCompleteCallback: ^{ NSLog(@"ALL DONE."); }
@@ -62,6 +69,8 @@
                            @{
                                TKHighlightViewTag: @(1001),
                                TKMessage: @"Please press this button again.",
+                               TKDescription: @"Second One step description",
+                               TKUseInfoDialog: @YES,
                                TKMessageRelativePoint: msgPointBottom,
                                TKStepType:[NSNumber numberWithInt:TKStepTypeButton]
                                },

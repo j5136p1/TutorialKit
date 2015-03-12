@@ -62,4 +62,6 @@
 @property (nonatomic) CGFloat blurAmount;
 @property (nonatomic, strong) UIColor *tintColor;
 @property (nonatomic, strong) UIColor *infoDialogBackgroundColor;
+@property (nonatomic, assign) id actionDelegate;
+@property (nonatomic, weak) UIButton *nextButton;
 @end

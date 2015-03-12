@@ -134,8 +134,9 @@
         tkv.sequenceName = name;
         tkv.tintColor = TutorialKit.sharedInstance.backgroundTintColor;
         tkv.infoDialogBackgroundColor = TutorialKit.sharedInstance.infoDialogBackgroundColor;
+        [tkv setActionDelegate:TutorialKit.sharedInstance];
         
-        if (![tkv.values objectForKey:TKSwipeGestureRelativeEndPoint]) {
+        if ([[tkv.values objectForKey:TKStepType] intValue] != TKStepTypeSwipe) {
             UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
                                                      initWithTarget:TutorialKit.sharedInstance
                                                      action:@selector(dismissTutorialView:)];
@@ -332,6 +333,12 @@
 + (void)setInfoDialogBackgroundColor:(UIColor *)color
 {
     TutorialKit.sharedInstance.infoDialogBackgroundColor = color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (void)goToNextStep:(id)sender{
+    [TutorialKit dismissCurrentTutorialView];
+    [TutorialKit advanceTutorialSequenceWithName:[TutorialKit.sharedInstance currentTutorialView].sequenceName andContinue:YES];
 }
 
 #pragma mark - Private
