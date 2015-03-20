@@ -33,6 +33,15 @@
     [swipeRightRecognizer setDirection:UISwipeGestureRecognizerDirectionRight];
     [self.view addGestureRecognizer:swipeRightRecognizer];
 
+
+    if (TutorialKit.isTutorialModeActive) {
+        [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
+    }
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    //[TutorialKit dismissCurrentTutorialView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -50,8 +59,14 @@
         
         if ([[[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKStepType] intValue] == TKStepTypeSwipe &&
             [[[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKSwipeGestureDirection] unsignedIntegerValue] == swipeGesture.direction) {
-            [TutorialKit dismissCurrentTutorialView];
-            [TutorialKit advanceTutorialSequenceWithName:[(TutorialKitView*)[TutorialKit currentTutorialView] sequenceName] andContinue:YES];
+            
+            if (!TutorialKit.isAutoContinueStep){
+                [[(TutorialKitView*)[TutorialKit currentTutorialView] nextButton] setHidden:NO];
+                [TutorialKit setIsAutoContinueStep:NO];
+            }else{
+                [TutorialKit dismissCurrentTutorialView];
+                [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
+            }
         }
         
     }
@@ -61,9 +76,16 @@
 #pragma mark UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     
-    if (([TutorialKit currentTutorialView] && [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] && touch.view == [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView]))
-        _handleGesture = YES;
-    else
+    if (([TutorialKit currentTutorialView] && [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] && touch.view == [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView])){
+        
+        if (!TutorialKit.isAutoContinueStep && [[(TutorialKitView*)[TutorialKit currentTutorialView] nextButton] isHidden] && [[[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKStepType] intValue] != TKStepTypeSwipe){
+            [[(TutorialKitView*)[TutorialKit currentTutorialView] nextButton] setHidden:NO];
+            [TutorialKit setIsAutoContinueStep:NO];
+            _handleGesture = NO;
+        }else
+            _handleGesture = YES;
+        
+    }else
         _handleGesture = NO;
     
     return _handleGesture;

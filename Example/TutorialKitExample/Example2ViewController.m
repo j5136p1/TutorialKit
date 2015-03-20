@@ -1,37 +1,27 @@
 //
-//  ExampleViewController.m
+//  Example2ViewController.m
 //  TutorialKitExample
 //
-//  Created by Alex on 4/30/14.
-//  Copyright (c) 2014 TutorialKit. All rights reserved.
+//  Created by Mirko Olsiewicz on 20.03.15.
+//  Copyright (c) 2015 TutorialKit. All rights reserved.
 //
 
-#import "ExampleViewController.h"
+#import "Example2ViewController.h"
 #import "TutorialKit.h"
 
-@interface ExampleViewController()
+@interface Example2ViewController ()
 @property (nonatomic, weak) UIButton *nextButton;
-@property (nonatomic, weak) UIButton *startButton;
-@property (nonatomic, weak) UIView *swipeView;
 @end
-@implementation ExampleViewController
+
+@implementation Example2ViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:self.repeatingBackground];
+    self.view.backgroundColor = [UIColor blackColor];
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.frame = CGRectMake(0, 0, 200.f, 60.f);
-    [btn setTitle:@"START" forState:UIControlStateNormal];
-    [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    [btn setTitleColor:UIColor.blackColor forState:UIControlStateHighlighted];
-    btn.backgroundColor = [UIColor colorWithRed:0.3 green:0.7 blue:0.3 alpha:1.0];
-    btn.layer.cornerRadius = 15.f;
-    [btn addTarget:self action:@selector(start:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn];
-    self.startButton = btn;
     
     // a reset button
     btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -41,22 +31,17 @@
     [btn setTitleColor:UIColor.blackColor forState:UIControlStateHighlighted];
     btn.backgroundColor = [UIColor colorWithRed:0.8 green:0.3 blue:0.3 alpha:1.0];
     btn.layer.cornerRadius = 15.f;
-    btn.tag = 1001;
+    btn.tag = 1003;
     [btn addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     self.nextButton = btn;
     
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 100)];
-    [view setTag:1002];
-    [view setBackgroundColor:[UIColor yellowColor]];
-    [self.view addSubview:view];
-    self.swipeView = view;
 }
 
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-
+    
     UIInterfaceOrientation orientation = UIApplication.sharedApplication.statusBarOrientation;
     CGPoint center = self.view.center;
     if(orientation == UIInterfaceOrientationLandscapeLeft ||
@@ -65,20 +50,8 @@
         center.y = self.view.center.x;
     }
     
-    self.startButton.center = CGPointMake(center.x, center.y * 0.5);
-    self.nextButton.center = CGPointMake(center.x, self.startButton.center.y + 100.f);
-    self.swipeView.center = CGPointMake(center.x, self.nextButton.center.y + 220.f);
+    self.nextButton.center = CGPointMake(center.x, center.y * 0.5);
     
-}
-
-
-- (void)start:(id)sender
-{
-    // TutorialKit remembers the current step in NSUserDefaults, but we want to
-    // reset the current step every time we press this button
-    [TutorialKit setCurrentStep:0 forTutorial:@"example"];
-    
-    [TutorialKit advanceTutorialSequenceWithName:@"example"];
 }
 
 - (void)nextStep:(id)sender
@@ -86,9 +59,7 @@
     // Auto continue to the next step when the current step is over
     // The default is to not to continue automatically.
     //[TutorialKit advanceTutorialSequenceWithName:@"example" andContinue:YES];
-    
-    [self performSegueWithIdentifier:@"NextController" sender:self];
-
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (UIImage *)repeatingBackground
@@ -105,4 +76,5 @@
     
     return img;
 }
+
 @end

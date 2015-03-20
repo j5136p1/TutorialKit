@@ -46,6 +46,7 @@ static NSString* const TKStepType = @"TKStepType";
 static NSString* const TKDescription = @"TKDescription";
 static NSString* const TKButtonTitle = @"TKButtonTitle";
 static NSString* const TKUseInfoDialog = @"TKUseInfoDialog";
+static NSString* const TKAutoContinue = @"TKAutoContinue";
 
 @protocol TKTutorialKitDelegate
     
@@ -204,4 +205,29 @@ typedef enum {
  @param sender for the action
  */
 + (void)goToNextStep:(id)sender;
+
+/** check whether tutorial mode is active
+ 
+ @return Tutorial mode active
+ */
++ (BOOL)isTutorialModeActive;
+
+/** check whether it is a step with auto continue or with next button
+ 
+ @return auto continue indicator
+ */
++ (BOOL)isAutoContinueStep;
+
+/** Set auto contiue indicator
+ 
+ @param bool value whether it is auto continue or not
+ */
++(void)setIsAutoContinueStep:(BOOL) autoContinueValue;
+
+/** get current tutorial name
+ 
+ @return Tutorial name when active otherwith nil
+ */
++ (NSString*)getActiveTutorialName;
+
 @end

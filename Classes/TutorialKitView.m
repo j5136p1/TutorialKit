@@ -184,14 +184,13 @@ extern UIFont *gTutorialLabelFont;
         if(color) tkv.descriptionLabel.textColor = color;
         if(color) tkv.nextButton.backgroundColor = color;
         if(font) tkv.descriptionLabel.font = font;
-        
-        if (nexButtonLabel)
-            [tkv.nextButton setTitle:nexButtonLabel forState:UIControlStateNormal];
-        else
-            [tkv.nextButton setTitle:@"Next" forState:UIControlStateNormal];
-
     }
     
+    if (nexButtonLabel)
+        [tkv.nextButton setTitle:nexButtonLabel forState:UIControlStateNormal];
+    else
+        [tkv.nextButton setTitle:@"Next" forState:UIControlStateNormal];
+
     tkv.useInfoDialogForMessages = useInfoDialog;
     tkv.messageCenterRelative = relativeMessageCenter;
     tkv.messageCenter = messageCenter;
@@ -231,15 +230,13 @@ extern UIFont *gTutorialLabelFont;
         if(color) tkv.descriptionLabel.textColor = color;
         if(color) tkv.nextButton.backgroundColor = color;
         if(font) tkv.descriptionLabel.font = font;
-
-        if (nexButtonLabel)
-            [tkv.nextButton setTitle:nexButtonLabel forState:UIControlStateNormal];
-        else
-            [tkv.nextButton setTitle:@"Next" forState:UIControlStateNormal];
-        
-        
     }
     
+    if (nexButtonLabel)
+        [tkv.nextButton setTitle:nexButtonLabel forState:UIControlStateNormal];
+    else
+        [tkv.nextButton setTitle:@"Next" forState:UIControlStateNormal];
+
     tkv.useInfoDialogForMessages = useInfoDialog;
     tkv.gesturePointsRelative = relativeSwipePositions;
     tkv.gestureStart = start;
@@ -479,12 +476,12 @@ extern UIFont *gTutorialLabelFont;
             self.descriptionLabel.textAlignment = NSTextAlignmentCenter;
         }
 
-        if ([[_values objectForKey:TKStepType] intValue] == TKStepTypeText ||
-            [[_values objectForKey:TKStepType] intValue] == TKStepTypeNonAction) {
-            [self.nextButton setFrame:CGRectMake(0, 0, 100, 44)];
+        [self.nextButton setFrame:CGRectMake(0, 0, 100, 44)];
+
+        if ([[_values objectForKey:TKAutoContinue] intValue] == TKStepTypeNonAction) {
             [self.nextButton setHidden:NO];
         }
-
+        
         self.controlView.center = self.messageCenterRelative ? [self getAbsolutePoint:self.messageCenter] : self.messageCenter;
         self.messageLabel.center = CGPointMake(self.controlView.center.x + kTKMessagePadding, (self.messageLabel.frame.size.height /2) + kTKMessagePadding);
         self.descriptionLabel.center = CGPointMake(self.controlView.center.x, self.messageLabel.frame.size.height+ kTKMessagePadding + (self.descriptionLabel.frame.size.height/2));
@@ -576,16 +573,20 @@ extern UIFont *gTutorialLabelFont;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     // pass through and dismiss!
+    CGPoint locationInButton = [_nextButton convertPoint:point fromView:_nextButton.window];
+
     if (_gestureStart.x == 0.0f && _gestureStart.y == 0.0f) {
         CGPoint locationInView = [_highlightView convertPoint:point fromView:_highlightView.window];
-        CGPoint locationInButton = [_nextButton convertPoint:point fromView:_nextButton.window];
 
         if ([_highlightView pointInside:locationInView withEvent:nil]) {
             self.gestureView.hidden = YES;
             [TutorialKit dismissCurrentTutorialView];
-        }else if ([_nextButton pointInside:locationInButton withEvent:nil]){
+        }else if (![_nextButton isHidden] && [_nextButton pointInside:locationInButton withEvent:nil]){
             [TutorialKit goToNextStep:_nextButton];
         }
+    }else if (![_nextButton isHidden] && [_nextButton pointInside:locationInButton withEvent:nil]){
+        self.gestureView.hidden = YES;
+        [TutorialKit goToNextStep:_nextButton];
     }
     return nil;
 }

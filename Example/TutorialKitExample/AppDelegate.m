@@ -14,9 +14,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = [UIColor whiteColor];
-    self.window.rootViewController = [[ExampleViewController alloc] init];
+    //self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    //self.window.backgroundColor = [UIColor whiteColor];
+    //self.window.rootViewController = [[ExampleViewController alloc] init];
     
     NSValue *msgPointTop = [NSValue valueWithCGPoint:
                          CGPointMake(0.5,0.20)];
@@ -29,15 +29,6 @@
                            CGPointMake(0.25,0.8)];
     // set up a simple 3 step tutorial
     NSArray *steps = @[
-                       // Step 0
-                       @{
-                           TKHighlightViewTag: @(1001),
-                           TKMessage: @"First, press this button.",
-                           TKDescription: @"First step description",
-                           TKUseInfoDialog: @YES,
-                           TKMessageRelativePoint: msgPointBottom,
-                           TKStepType:[NSNumber numberWithInt:TKStepTypeButton]
-                           },
                        // Step 1
                        @{
                            TKHighlightViewTag: @(1002),
@@ -48,7 +39,19 @@
                            TKUseInfoDialog: @YES,
                            TKMessageRelativePoint: msgPointTop,
                            TKStepType:[NSNumber numberWithInt:TKStepTypeSwipe],
-                           TKSwipeGestureDirection: [NSNumber numberWithUnsignedInteger:UISwipeGestureRecognizerDirectionLeft]
+                           TKSwipeGestureDirection: [NSNumber numberWithUnsignedInteger:UISwipeGestureRecognizerDirectionLeft],
+                           TKAutoContinue: @NO
+                           },
+                       // Step 0
+                       @{
+                           TKHighlightViewTag: @(1001),
+                           TKMessage: @"First, press this button.",
+                           TKDescription: @"First step description",
+                           TKUseInfoDialog: @YES,
+                           TKMessageRelativePoint: msgPointBottom,
+                           TKStepType:[NSNumber numberWithInt:TKStepTypeButton],
+                           TKAutoContinue: @YES
+
                            },
                        // Step 2
                        @{
@@ -58,6 +61,7 @@
                            TKUseInfoDialog: @YES,
                            TKMessageRelativePoint: msgPointBottom,
                            TKStepType:[NSNumber numberWithInt:TKStepTypeNonAction],
+                           TKAutoContinue: @YES,
                            TKCompleteCallback: ^{ NSLog(@"ALL DONE."); }
                            },
                        ];
@@ -67,12 +71,14 @@
     // insert an extra step
     NSArray *moreSteps = @[
                            @{
-                               TKHighlightViewTag: @(1001),
+                               TKHighlightViewTag: @(1003),
                                TKMessage: @"Please press this button again.",
                                TKDescription: @"Second One step description",
                                TKUseInfoDialog: @YES,
                                TKMessageRelativePoint: msgPointBottom,
-                               TKStepType:[NSNumber numberWithInt:TKStepTypeButton]
+                               TKStepType:[NSNumber numberWithInt:TKStepTypeButton],
+                               TKAutoContinue: @YES
+
                                },
                            ];
     [TutorialKit insertTutorialSequence:moreSteps name:@"example" beforeStep:2];

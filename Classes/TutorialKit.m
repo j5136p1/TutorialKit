@@ -40,6 +40,9 @@
 @property (nonatomic, strong) UIFont *labelFont;
 @property (nonatomic) CGFloat blurAmount;
 @property (nonatomic) BOOL shouldContinue;
+@property (nonatomic) BOOL autoContinue;
+@property (nonatomic) BOOL isTutorialModeActive;
+@property (nonatomic) NSString *activeTutorialName;
 @end
 
 @implementation TutorialKit
@@ -90,6 +93,8 @@
     }
     
     if(step.integerValue >= sequence.count || step.integerValue < 0) {
+        TutorialKit.sharedInstance.isTutorialModeActive = NO;
+        [TutorialKit.sharedInstance setActiveTutorialName:nil];
         // sequence step is invalid or sequence is over
         return NO;
     }
@@ -145,7 +150,15 @@
         
         TutorialKit.sharedInstance.currentTutorialView = tkv;
         TutorialKit.sharedInstance.shouldContinue = shouldContinue;
+        
+        if ([current objectForKey:TKAutoContinue])
+            TutorialKit.sharedInstance.autoContinue = [[current objectForKey:TKAutoContinue] boolValue];
+        else
+            TutorialKit.sharedInstance.autoContinue = @YES;
+        
         [TutorialKit presentTutorialView:tkv withAnimation:YES];
+        TutorialKit.sharedInstance.isTutorialModeActive = YES;
+        [TutorialKit.sharedInstance setActiveTutorialName:name];
     }
     
     return tkv != NULL;
@@ -210,6 +223,28 @@
 + (UIView *)currentTutorialView
 {
     return TutorialKit.sharedInstance.currentTutorialView;
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (BOOL)isTutorialModeActive{
+    return TutorialKit.sharedInstance.isTutorialModeActive;
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (BOOL)isAutoContinueStep{
+    return TutorialKit.sharedInstance.autoContinue;
+}
+
++(void)setIsAutoContinueStep:(BOOL) autoContinueValue{
+    [TutorialKit.sharedInstance setAutoContinue:autoContinueValue];
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (NSString*)getActiveTutorialName{
+        if (TutorialKit.sharedInstance.isTutorialModeActive)
+        return TutorialKit.sharedInstance.activeTutorialName;
+    else
+        return nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -337,8 +372,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 + (void)goToNextStep:(id)sender{
+    [sender setHidden:YES];
     [TutorialKit dismissCurrentTutorialView];
-    [TutorialKit advanceTutorialSequenceWithName:[TutorialKit.sharedInstance currentTutorialView].sequenceName andContinue:YES];
+    [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
 }
 
 #pragma mark - Private
