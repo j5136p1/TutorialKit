@@ -230,4 +230,9 @@ typedef enum {
  */
 + (NSString*)getActiveTutorialName;
 
+/** check the view which are disabled for tutorial mode and reenable them
+ 
+ */
++(void) reEnableUserInteractionForDeactivatedViews;
+
 @end

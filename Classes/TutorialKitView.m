@@ -478,7 +478,7 @@ extern UIFont *gTutorialLabelFont;
 
         [self.nextButton setFrame:CGRectMake(0, 0, 100, 44)];
 
-        if ([[_values objectForKey:TKAutoContinue] intValue] == TKStepTypeNonAction) {
+        if ([[_values objectForKey:TKStepType] intValue] == TKStepTypeNonAction) {
             [self.nextButton setHidden:NO];
         }
         

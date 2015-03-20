@@ -31,7 +31,9 @@
 #define TKStep @"TutorialKitStep"
 #define TKUserDefaultsKey @"TutorialKitUserDefaults"
 
-@interface TutorialKit()
+@interface TutorialKit(){
+    NSMutableArray *_changedUserInteractionViewList;
+}
 @property (nonatomic, strong) NSMutableDictionary *sequences;
 @property (nonatomic, strong) TutorialKitView *currentTutorialView;
 @property (nonatomic, strong) UIColor *backgroundTintColor;
@@ -69,6 +71,8 @@
         // a tutorial view is already visible
         return NO;
     }
+    
+    [TutorialKit reEnableUserInteractionForDeactivatedViews];
     
     NSMutableDictionary *sequenceData = [TutorialKit.sharedInstance.sequences objectForKey:name];
     if(!sequenceData) {
@@ -248,8 +252,18 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
++(void) reEnableUserInteractionForDeactivatedViews{
+
+    for (UIView *disabledViews in TutorialKit.sharedInstance->_changedUserInteractionViewList) {
+        [disabledViews setUserInteractionEnabled:YES];
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
 + (void)dismissCurrentTutorialView
 {
+    
     if(TutorialKit.sharedInstance.currentTutorialView) {
         [TutorialKit.sharedInstance
          dismissTutorialView:TutorialKit.sharedInstance.currentTutorialView];
@@ -297,6 +311,7 @@
     NSArray *windows = [UIApplication sharedApplication].windows;
     if(windows && windows.count > 0) {
         UIWindow *window = [windows objectAtIndex:0];
+        
         [window addSubview:view];
         view.frame = window.bounds;
         [view setNeedsLayout];
@@ -311,7 +326,47 @@
         else {
             view.alpha = 1.;
         }
+        
+        TutorialKit.sharedInstance->_changedUserInteractionViewList = [[NSMutableArray alloc] init];
+
+        [TutorialKit.sharedInstance disableUserInteractionForSubViews:window.rootViewController.view.subviews];
+        
+        if ([[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView])
+            [TutorialKit.sharedInstance enableUserInteractionForSuperviewOfView:[[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView]];
+        
+        [TutorialKit.sharedInstance enableUserInteractionForSuperviewOfView:view];
+        
     }
+}
+
+-(void) disableUserInteractionForSubViews:(NSArray*)subviewsList{
+    for (UIView *subview in subviewsList){
+        
+        if (subview.isUserInteractionEnabled && ![subview isKindOfClass:[UINavigationBar class]]) {
+            [subview setUserInteractionEnabled:NO];
+            [_changedUserInteractionViewList addObject:subview];
+        }
+
+        [self disableUserInteractionForSubViews:subview.subviews];
+    }
+    
+}
+
+-(void) enableUserInteractionForSuperviewOfView:(UIView*) enabledView{
+
+    if (!enabledView.isUserInteractionEnabled) {
+        [enabledView setUserInteractionEnabled:YES];
+        
+        if ([_changedUserInteractionViewList containsObject:enabledView])
+            [_changedUserInteractionViewList removeObject:enabledView];
+        else
+            [_changedUserInteractionViewList addObject:enabledView];
+        
+    }
+    
+    if (enabledView.superview)
+        [self enableUserInteractionForSuperviewOfView:enabledView.superview];
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////

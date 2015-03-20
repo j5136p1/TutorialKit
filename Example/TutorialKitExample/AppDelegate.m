@@ -61,7 +61,7 @@
                            TKUseInfoDialog: @YES,
                            TKMessageRelativePoint: msgPointBottom,
                            TKStepType:[NSNumber numberWithInt:TKStepTypeNonAction],
-                           TKAutoContinue: @YES,
+                           TKAutoContinue: @NO,
                            TKCompleteCallback: ^{ NSLog(@"ALL DONE."); }
                            },
                        ];

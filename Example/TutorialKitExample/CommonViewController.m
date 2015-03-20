@@ -34,14 +34,23 @@
     [self.view addGestureRecognizer:swipeRightRecognizer];
 
 
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+
     if (TutorialKit.isTutorialModeActive) {
         [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
     }
+
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    //[TutorialKit dismissCurrentTutorialView];
+    
+    if (TutorialKit.isTutorialModeActive)
+        [TutorialKit reEnableUserInteractionForDeactivatedViews];
+    
 }
 
 - (void)didReceiveMemoryWarning {
