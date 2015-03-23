@@ -29,7 +29,7 @@
                            CGPointMake(0.25,0.8)];
     // set up a simple 3 step tutorial
     NSArray *steps = @[
-                       // Step 1
+                       // Step 0
                        @{
                            TKHighlightViewTag: @(1002),
                            TKSwipeGestureRelativeStartPoint: swipeStart,
@@ -42,7 +42,7 @@
                            TKSwipeGestureDirection: [NSNumber numberWithUnsignedInteger:UISwipeGestureRecognizerDirectionLeft],
                            TKAutoContinue: @NO
                            },
-                       // Step 0
+                       // Step 1
                        @{
                            TKHighlightViewTag: @(1001),
                            TKMessage: @"First, press this button.",
@@ -82,7 +82,22 @@
                                },
                            ];
     [TutorialKit insertTutorialSequence:moreSteps name:@"example" beforeStep:2];
-    
+
+    // insert an extra step
+    NSArray *textSteps = @[
+                           @{
+                               TKHighlightViewTag: @(1004),
+                               TKMessage: @"Type in a text.",
+                               TKDescription: @"Textfield description",
+                               TKUseInfoDialog: @YES,
+                               TKMessageRelativePoint: msgPointBottom,
+                               TKStepType:[NSNumber numberWithInt:TKStepTypeText],
+                               TKAutoContinue: @NO
+                               
+                               },
+                           ];
+    [TutorialKit insertTutorialSequence:textSteps name:@"example" beforeStep:2];
+
     // some optional defaults
     [TutorialKit setDefaultBlurAmount:0.5];
     [TutorialKit setDefaultMessageColor:[UIColor whiteColor]];

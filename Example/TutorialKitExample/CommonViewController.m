@@ -36,8 +36,8 @@
 
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
 
     if (TutorialKit.isTutorialModeActive) {
         [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
@@ -85,7 +85,8 @@
 #pragma mark UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     
-    if (([TutorialKit currentTutorialView] && [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] && touch.view == [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView])){
+    if (([TutorialKit currentTutorialView] && [[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] &&
+         ([touch.view isKindOfClass:[[[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] class]] &&  touch.view.tag == [[[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKHighlightView] tag]))){
         
         if (!TutorialKit.isAutoContinueStep && [[(TutorialKitView*)[TutorialKit currentTutorialView] nextButton] isHidden] && [[[(TutorialKitView*)[TutorialKit currentTutorialView] values] objectForKey:TKStepType] intValue] != TKStepTypeSwipe){
             [[(TutorialKitView*)[TutorialKit currentTutorialView] nextButton] setHidden:NO];

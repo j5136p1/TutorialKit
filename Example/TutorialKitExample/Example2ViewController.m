@@ -11,6 +11,7 @@
 
 @interface Example2ViewController ()
 @property (nonatomic, weak) UIButton *nextButton;
+@property (nonatomic, weak) UITextField *textField;
 @end
 
 @implementation Example2ViewController
@@ -36,6 +37,14 @@
     [self.view addSubview:btn];
     self.nextButton = btn;
     
+    UITextField *txt = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 200, 21)];
+    [txt setBackgroundColor:[UIColor whiteColor]];
+    
+    [txt setPlaceholder:@"Type Text"];
+    txt.tag = 1004;
+    [self.view addSubview:txt];
+    self.textField = txt;
+    
 }
 
 - (void)viewWillLayoutSubviews
@@ -52,6 +61,7 @@
     
     self.nextButton.center = CGPointMake(center.x, center.y * 0.5);
     
+    self.textField.center = CGPointMake(center.x, self.nextButton.center.y + 80);
 }
 
 - (void)nextStep:(id)sender

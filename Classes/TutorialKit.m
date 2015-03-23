@@ -329,7 +329,7 @@
         
         TutorialKit.sharedInstance->_changedUserInteractionViewList = [[NSMutableArray alloc] init];
 
-        [TutorialKit.sharedInstance disableUserInteractionForSubViews:window.rootViewController.view.subviews];
+        [TutorialKit.sharedInstance disableUserInteractionForSubViews:window.subviews];
         
         if ([[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView])
             [TutorialKit.sharedInstance enableUserInteractionForSuperviewOfView:[[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView]];
@@ -428,8 +428,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 + (void)goToNextStep:(id)sender{
     [sender setHidden:YES];
-    [TutorialKit dismissCurrentTutorialView];
-    [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
+    
+    if ([[[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKStepType] intValue] == TKStepTypeText &&
+        ([[[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView] isKindOfClass:[UITextField class]] ||
+         [[[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView] isKindOfClass:[UITextView class]]) &&
+        [[[[TutorialKit.sharedInstance.currentTutorialView values] objectForKey:TKHighlightView] text] length] == 0) {
+        UIAlertView *enterText = [[UIAlertView alloc] initWithTitle:@"Text fehlt" message:@"Bitte geben Sie einen Text ein" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [enterText show];
+    }else{
+        [TutorialKit dismissCurrentTutorialView];
+        [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
+    }
+    
 }
 
 #pragma mark - Private

@@ -478,7 +478,8 @@ extern UIFont *gTutorialLabelFont;
 
         [self.nextButton setFrame:CGRectMake(0, 0, 100, 44)];
 
-        if ([[_values objectForKey:TKStepType] intValue] == TKStepTypeNonAction) {
+        if ([[_values objectForKey:TKStepType] intValue] == TKStepTypeNonAction ||
+            [[_values objectForKey:TKStepType] intValue] == TKStepTypeText) {
             [self.nextButton setHidden:NO];
         }
         
@@ -578,7 +579,7 @@ extern UIFont *gTutorialLabelFont;
     if (_gestureStart.x == 0.0f && _gestureStart.y == 0.0f) {
         CGPoint locationInView = [_highlightView convertPoint:point fromView:_highlightView.window];
 
-        if ([_highlightView pointInside:locationInView withEvent:nil]) {
+        if ([_highlightView pointInside:locationInView withEvent:nil] && [[_values objectForKey:TKStepType] intValue] != TKStepTypeText) {
             self.gestureView.hidden = YES;
             [TutorialKit dismissCurrentTutorialView];
         }else if (![_nextButton isHidden] && [_nextButton pointInside:locationInButton withEvent:nil]){
