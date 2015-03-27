@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CommonViewController : UIViewController<UIGestureRecognizerDelegate>
+@interface TutorialKitBaseViewController : UIViewController<UIGestureRecognizerDelegate>
+
++(NSInteger)getTagForNextTutorialHighlightView;
 
 @end

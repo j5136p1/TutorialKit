@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 TutorialKit. All rights reserved.
 //
 
-#import "CommonViewController.h"
+#import "TutorialKitBaseViewController.h"
 
-@interface Example2ViewController : CommonViewController
+@interface Example2ViewController : TutorialKitBaseViewController
 
 @end

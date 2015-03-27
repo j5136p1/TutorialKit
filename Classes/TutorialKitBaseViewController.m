@@ -6,32 +6,19 @@
 //  Copyright (c) 2015 TutorialKit. All rights reserved.
 //
 
-#import "CommonViewController.h"
+#import "TutorialKitBaseViewController.h"
 #import "TutorialKit.h"
 #import "TutorialKitView.h"
 
-@interface CommonViewController (){
+@interface TutorialKitBaseViewController (){
     BOOL _handleGesture;
 }
 @end
 
-@implementation CommonViewController
+@implementation TutorialKitBaseViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognizer:)];
-    tapRecognizer.delegate = self;
-    [self.view addGestureRecognizer:tapRecognizer];
-    
-    UISwipeGestureRecognizer *swipeLeftRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeHorizontalRecognizer:)];
-    [swipeLeftRecognizer setDirection:UISwipeGestureRecognizerDirectionLeft];
-    [self.view addGestureRecognizer:swipeLeftRecognizer];
-
-    UISwipeGestureRecognizer *swipeRightRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeHorizontalRecognizer:)];
-    [swipeRightRecognizer setDirection:UISwipeGestureRecognizerDirectionRight];
-    [self.view addGestureRecognizer:swipeRightRecognizer];
 
 
 }
@@ -40,22 +27,40 @@
     [super viewDidAppear:animated];
 
     if (TutorialKit.isTutorialModeActive) {
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognizer:)];
+        tapRecognizer.delegate = self;
+        [self.view addGestureRecognizer:tapRecognizer];
+        
+        UISwipeGestureRecognizer *swipeLeftRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeHorizontalRecognizer:)];
+        [swipeLeftRecognizer setDirection:UISwipeGestureRecognizerDirectionLeft];
+        [self.view addGestureRecognizer:swipeLeftRecognizer];
+        
+        UISwipeGestureRecognizer *swipeRightRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeHorizontalRecognizer:)];
+        [swipeRightRecognizer setDirection:UISwipeGestureRecognizerDirectionRight];
+        [self.view addGestureRecognizer:swipeRightRecognizer];
         [TutorialKit advanceTutorialSequenceWithName:[TutorialKit getActiveTutorialName] andContinue:YES];
     }
 
-}
-
--(void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    
     if (TutorialKit.isTutorialModeActive)
         [TutorialKit reEnableUserInteractionForDeactivatedViews];
-    
+
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
++(NSInteger)getTagForNextTutorialHighlightView{
+    NSArray *steps = [TutorialKit getStepsForCurrentTutorial];
+    
+    NSInteger tag = 0;
+    
+    if (steps && [steps count] > 0 && [steps count] >= [TutorialKit currentStepForTutorialWithName:[TutorialKit getActiveTutorialName]]) {
+        tag = [[(NSDictionary*)[steps objectAtIndex:[TutorialKit currentStepForTutorialWithName:[TutorialKit getActiveTutorialName]]] objectForKey:TKHighlightViewTag] integerValue];
+    }
+    
+    return tag;
 }
 
 -(void)tapRecognizer:(UITapGestureRecognizer*) tapGesture{

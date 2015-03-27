@@ -31,6 +31,7 @@
 - (UIView*)findViewRecursively:(BOOL(^)(UIView* subview, BOOL* stop))recurse
 {
     for( UIView* subview in self.subviews ) {
+        NSLog(@"My View : %@", subview);
         BOOL stop = NO;
         if( recurse( subview, &stop ) ) {
             UIView *view = [subview findViewRecursively:recurse];

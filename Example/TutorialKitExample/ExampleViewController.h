@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CommonViewController.h"
+#import "TutorialKitBaseViewController.h"
 
-@interface ExampleViewController : CommonViewController
+@interface ExampleViewController : TutorialKitBaseViewController
 
 @end

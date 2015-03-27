@@ -224,6 +224,17 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
++ (NSArray*)getStepsForCurrentTutorial{
+    NSDictionary *sequence = [TutorialKit.sharedInstance.sequences objectForKey:[TutorialKit getActiveTutorialName]];
+    NSArray *steps = nil;
+    
+    if (sequence)
+        steps = sequence[TKSequence];
+    
+    return steps;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 + (UIView *)currentTutorialView
 {
     return TutorialKit.sharedInstance.currentTutorialView;
@@ -232,6 +243,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 + (BOOL)isTutorialModeActive{
     return TutorialKit.sharedInstance.isTutorialModeActive;
+}
+
+////////////////////////////////////////////////////////////////////////////////
++ (void)activateTutorial:(NSString*)tutorialName{
+    [TutorialKit.sharedInstance setIsTutorialModeActive:YES];
+    [TutorialKit.sharedInstance setActiveTutorialName:tutorialName];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

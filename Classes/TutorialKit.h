@@ -143,6 +143,12 @@ typedef enum {
  */
 + (NSInteger)stepsForTutorialWithName:(NSString *)name;
 
+/** get all steps for current tutorial
+ 
+ @return all steps for the current tutorial
+ */
++ (NSArray*)getStepsForCurrentTutorial;
+
 /** The UIView for the active tutorial step
  
  @return Returns the current tutorial UIView or nil if no tutorial is visible
@@ -211,6 +217,12 @@ typedef enum {
  @return Tutorial mode active
  */
 + (BOOL)isTutorialModeActive;
+
+/** set indicator that tutorial mode is active now
+
+ @param the name of the tutorial which will be activated
+*/
++ (void)activateTutorial:(NSString*)tutorialName;
 
 /** check whether it is a step with auto continue or with next button
  

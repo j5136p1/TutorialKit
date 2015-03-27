@@ -278,7 +278,7 @@ extern UIFont *gTutorialLabelFont;
     
     BOOL useInfoDialog = NO;
     if ([values objectForKey:TKUseInfoDialog])
-        useInfoDialog = [values objectForKey:TKUseInfoDialog];
+        useInfoDialog = [[values objectForKey:TKUseInfoDialog] boolValue];
     
     CGFloat radius = 0.0f;
     if([values objectForKey:TKHighlightRadius]) {
